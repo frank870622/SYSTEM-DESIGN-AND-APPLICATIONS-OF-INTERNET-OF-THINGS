@@ -14,18 +14,22 @@ def parse(text):
     return out
 
 def draw_rect(pen):
+    pen.left(90)
+    pen.fd(10)
+    pen.right(90)
     pen.pd()
     pen.begin_fill()
     pen.fd(100)
     pen.left(90)
-    pen.fd(60)
+    pen.fd(40)
     pen.left(90)
     pen.fd(100)
     pen.left(90)
-    pen.fd(60)
-    pen.left(90)
+    pen.fd(40)
     pen.end_fill()
     pen.pu()
+    pen.fd(10)
+    pen.left(90)
     pen.fd(100)
 
 def draw_circle(pen):
