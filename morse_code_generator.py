@@ -68,8 +68,8 @@ def draw(text, file_name):
 
 
     pen.pu()
-    orig_x = -250
-    pen.goto(-250, 250)
+    orig_x = -350
+    pen.goto(-350, 250)
 
     for e in elements:
         for m in e:
@@ -92,7 +92,7 @@ def draw(text, file_name):
             
 
 if __name__ == "__main__":
-    plaintext = "hello"
+    plaintext = "m1"
     file_name = "hello"
     
     draw(plaintext, file_name)
