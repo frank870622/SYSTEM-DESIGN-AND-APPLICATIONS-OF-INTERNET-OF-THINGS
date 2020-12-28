@@ -32,17 +32,20 @@ def draw_rect(pen):
     pen.left(90)
     pen.fd(100)
 
-def draw_circle(pen):
+def draw_circle(pen, rad = 30):
     pen.fd(30)
     pen.pd()
     pen.begin_fill()
-    pen.circle(30)
+    pen.circle(rad)
     pen.end_fill()
     pen.pu()
-    pen.fd(30)
+    pen.fd(rad)
 
 def draw(text, file_name):
     elements = parse(text)
+
+    screen = turtle.Screen()
+    screen.setup(1000, 1000)
 
     pen = turtle.Turtle()
     pen.pensize(3)
@@ -50,6 +53,20 @@ def draw(text, file_name):
     pen.speed(10)
 
     pen.st()
+
+    # draw anchor point
+    pen.pu()
+    pen.goto(-480, 330)
+    draw_circle(pen)
+    pen.goto(420, 330)
+    draw_circle(pen)
+    pen.goto(-480, -320)
+    draw_circle(pen, -30)
+    pen.goto(420, -320)
+    draw_circle(pen, -30)
+
+
+
     pen.pu()
     orig_x = -250
     pen.goto(-250, 250)
