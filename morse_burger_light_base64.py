@@ -156,14 +156,16 @@ def cut_picture(input_obj):
 
         params = cv2.SimpleBlobDetector_Params()
         params.minArea = 30.0
-        params.maxArea = 100000.0
+        params.maxArea = 10000000.0
         params.filterByCircularity = True
-        params.minCircularity = 0.83
+        params.minCircularity = 0.5
         params.filterByArea = True
         detector = cv2.SimpleBlobDetector_create(params)
         keypoints = detector.detect(frame)
 
         print(keypoints)
+        if len(keypoints) < 4:
+            continue
 
         all_keypoints = []
         for each_key in keypoints:
@@ -193,11 +195,12 @@ def cut_picture(input_obj):
 
         retval, mask = cv2.findHomography(np.float32(
             keypoints), np.float32([[0, 0], [550, 0], [550, 550], [0, 550]]))
+        print('before')
         dst = cv2.warpPerspective(src=frame, M=retval, dsize=(550, 550))
-
+        print('after')
         input_obj.image[i] = dst[25:525, 25:525]
-        #cv2.imshow(str(i), input_obj.image[i])
-        #cv2.waitKey()
+        cv2.imshow(str(i), input_obj.image[i])
+        cv2.waitKey()
     
 
 
