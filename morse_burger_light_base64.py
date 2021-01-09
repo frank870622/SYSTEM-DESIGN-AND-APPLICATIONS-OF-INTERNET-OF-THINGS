@@ -158,7 +158,7 @@ def cut_picture(input_obj):
         params.minArea = 30.0
         params.maxArea = 100000.0
         params.filterByCircularity = True
-        params.minCircularity = 0.83
+        params.minCircularity = 0.5
         params.filterByArea = True
         detector = cv2.SimpleBlobDetector_create(params)
         keypoints = detector.detect(frame)
@@ -196,8 +196,8 @@ def cut_picture(input_obj):
         dst = cv2.warpPerspective(src=frame, M=retval, dsize=(550, 550))
 
         input_obj.image[i] = dst[25:525, 25:525]
-        #cv2.imshow(str(i), input_obj.image[i])
-        #cv2.waitKey()
+        cv2.imshow(str(i), input_obj.image[i])
+        cv2.waitKey()
     
 
 
@@ -229,16 +229,16 @@ def load_image_base64(base64_list):
     for base64_string in base64_list:
         image_64 = base64_string  # raw data with base64 encoding
         decoded_data = base64.b64decode(image_64)
-        np_data = np.fromstring(decoded_data,np.uint8)
+        np_data = np.frombuffer(decoded_data,np.uint8)
         mores_input_image.append(cv2.imdecode(np_data,cv2.IMREAD_UNCHANGED))
 
-    """
-    for show_image in mores_input_image:
-        cv2.imshow('base 64 image', show_image)
-        cv2.waitKey()
     
-    cv2.destroyallwindows()
-    """
+    # for show_image in mores_input_image:
+        # cv2.imshow('base 64 image', show_image)
+        # cv2.waitKey()
+    
+    # cv2.destroyAllWindows()
+   
 
 
 
@@ -253,7 +253,9 @@ def load_an_image_base64(base64_input_code):
 if __name__ == "__main__":
     #imput_url = sys.argv[1]
     #load_image()
-    load_image_base64(morse_64_code)
+    with open("/tmp/base64str.txt", 'r') as f:
+        code = f.readlines()
+        load_image_base64(code)
     mos_burger()
 
 
