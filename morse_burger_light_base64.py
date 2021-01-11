@@ -195,9 +195,7 @@ def cut_picture(input_obj):
 
         retval, mask = cv2.findHomography(np.float32(
             keypoints), np.float32([[0, 0], [550, 0], [550, 550], [0, 550]]))
-        print('before')
         dst = cv2.warpPerspective(src=frame, M=retval, dsize=(550, 550))
-        print('after')
         input_obj.image[i] = dst[25:525, 25:525]
         cv2.imshow(str(i), input_obj.image[i])
         cv2.waitKey()
