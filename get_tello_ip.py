@@ -107,6 +107,7 @@ def get_tello_ip():
 
     tello_ip_list = []
     find_available_tello(1)
+    m_socket.shutdown(2)
     m_socket.close()
     return tello_ip_list[0]
 
