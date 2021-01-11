@@ -32,8 +32,22 @@ def draw_rect(pen):
     pen.left(90)
     pen.fd(100)
 
-def draw_circle(pen, rad = 30):
-    pen.fd(30)
+def draw_circle(pen, rad = 20):
+    pen.fd(rad)
+    pen.left(90)
+    pen.fd(30-rad)
+    pen.right(90)
+    pen.pd()
+    pen.begin_fill()
+    pen.circle(rad)
+    pen.end_fill()
+    pen.pu()
+    pen.fd(rad)
+    pen.right(90)
+    pen.fd(30-rad)
+    pen.left(90)
+
+def draw_anchor_point(pen, rad=30):
     pen.pd()
     pen.begin_fill()
     pen.circle(rad)
@@ -56,14 +70,14 @@ def draw(text, file_name):
 
     # draw anchor point
     pen.pu()
-    pen.goto(-480, 330)
-    draw_circle(pen)
-    pen.goto(420, 330)
-    draw_circle(pen)
-    pen.goto(-480, -320)
-    draw_circle(pen, -30)
-    pen.goto(420, -320)
-    draw_circle(pen, -30)
+    pen.goto(-450, 330)
+    draw_anchor_point(pen)
+    pen.goto(450, 330)
+    draw_anchor_point(pen)
+    pen.goto(-450, -320)
+    draw_anchor_point(pen)
+    pen.goto(450, -320)
+    draw_anchor_point(pen)
 
 
 
@@ -92,7 +106,7 @@ def draw(text, file_name):
             
 
 if __name__ == "__main__":
-    plaintext = "m1"
+    plaintext = "ergpq"
     file_name = "hello"
     
     draw(plaintext, file_name)
