@@ -94,7 +94,7 @@ def get_subnets():
         addr_list.append(address)
     return subnets, addr_list
 
-def main():
+def get_tello_ip():
     global m_socket
     global tello_ip_list
 
@@ -108,6 +108,7 @@ def main():
     tello_ip_list = []
     find_available_tello(1)
     m_socket.close()
+    return tello_ip_list[0]
 
 if __name__ == "__main__":
-    main()
+    get_tello_ip()
