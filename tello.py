@@ -138,12 +138,13 @@ class Tello:
         self.sockCmd = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.addrCmd = (self.tello_ip, portCmd)
         self.sockCmd.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sockCmd.settimeout(.5)
+        self.sockCmd.settimeout(5)
+        # self.sockCmd.bind(('', 8889))
         self.threadCmdRX = threading.Thread(target=self._threadCmdRX, args=(self.pill2kill, "task"))
         self.threadCmdRX.start()
 
-        # self.threadVideoRX = threading.Thread(target=self._threadVideoRX, args=(self.pill2kill, "task"))
-        # self.threadVideoRX.start()
+        self.threadVideoRX = threading.Thread(target=self._threadVideoRX, args=(self.pill2kill, "task"))
+        self.threadVideoRX.start()
         self.seqID = 0;
         self.stickData = 0
         self.rcCtr = 0;
@@ -151,6 +152,9 @@ class Tello:
 
     def __del__(self):
         self.stop()
+
+    def command(self):
+        self._sendCmd(0x00, self.TELLO_CMD_CONN, None)
 
     def stop(self):
         self.task20ms.stop()
@@ -259,7 +263,6 @@ class Tello:
                 calcCRC16=self._calcCRC16(buf, size - 2);
                 if crc16 != calcCRC16:
                     print('wrong CRC8 {0:04x / 1:04x}'.format(crc16, calcCRC16))
-                return cmdID, pacType, data
                 #print 'pt:{0:02x}, cmd:{1:4d}={2:04x}, seq:{3:04x}, data_sz:{4:d} - '.format(pacType, cmdID, cmdID, seqID, dataSize)
             else:
                 if mark == 0x63:
@@ -346,20 +349,26 @@ class Tello:
     def _threadCmdRX(self, stop_event, arg):
         #print '_threadCmdRX started !!!'
         statusCtr = 0
-        data = bytearray(1024)
+        data = bytearray(20480)
         payload = None
         
         while not stop_event.is_set():
             try:
+                # data, addr = self.sockCmd.recvfrom(1024)
+                # print(len(data))
                 size, addr = self.sockCmd.recvfrom_into(data)
+                print(size)
+                
             except socket.timeout as e:
+                print("hello")
                 time.sleep(.5)
                 continue
             except socket.error as e:
                 print(e)
                 continue
             else:
-                cmdID, pacType   = self._parsePacket(data[:size])
+                
+                cmdID   = self._parsePacket(data[:size])
                 payload = ByteBuffer.wrap(data[9:size-1])
                
                 if cmdID == self.TELLO_CMD_CONN_ACK:
@@ -409,6 +418,7 @@ class Tello:
                         self._sendCmd(0x50, self.TELLO_CMD_SMART_VIDEO_STATUS, bytearray([0x00]));
                 elif cmdID == self.TELLO_CMD_FILE_SIZE:
                     # if 0x80 & pacType:
+                    print("file_size")
                     fileType = payload.get_ULInt8()
                     fileSize = payload.get_ULInt32()
                     fileID = payload.get_ULint16()
@@ -422,6 +432,7 @@ class Tello:
                                                 
                 
                 elif cmdID == self.TELLO_CMD_FILE_DATA:
+                    print("file_data")
                     fileID = payload.get_ULInt16()
                     filePiece = payload.get_ULInt32()
                     fileChunk = payload.get_ULInt32()
@@ -436,7 +447,8 @@ class Tello:
                         out = {}
 
                     
-                        
+                else:
+                    print("cmdID not found")
                 #else:
                     #for i in data:
                     #    print hex(ord(i)),
@@ -451,7 +463,7 @@ class Tello:
         #print '_threadVideoRX started !!!'
 
         sockVideo = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        addrVideo = (self.tello_ip, self.TELLO_PORT_VIDEO)
+        addrVideo = ("0.0.0.0", self.TELLO_PORT_VIDEO)
         sockVideo.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sockVideo.settimeout(.5)
         sockVideo.bind(addrVideo)
