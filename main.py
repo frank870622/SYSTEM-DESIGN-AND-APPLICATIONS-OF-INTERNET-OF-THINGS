@@ -1,65 +1,50 @@
+import threading
 
 from morse_burger_light_base64 import load_image_base64, mos_burger
-from tello_manager import *
-from multi_tello_test import *
 
-MORSE = '0TQZH5PED006XH'
-GREEN_RED = '0TQZH5PED006SS'
-CHINESE = '0TQZH5NED005FG'
+import tellopy
+image_list = []
 
-BATTERY_THRESHOLD = 30
+def image_handler(event, sender, data):
+    global image_list
+    image_list.append(data)
+    # publish: I'm ready take another
 
-def put_queue_and_wait(action, manager, execution_pools):
-    for queue in execution_pools:
-        queue.put(action)
+def take_pic_after_get_cmd(mDrone):
+    """ mqtt client """
+    # get cmd
+    # subscribe: server_cmd
+    # while listening
+        # if cmd == take
+            # mDrone.take_picture()
+        # elif cmd == stop
+            # break
+    pass
 
-    while not all_queue_empty(execution_pools):
-        time.sleep(0.5)
+
+def main():
+    mDrone = tellopy.Tello()
+    mDrone.connect()
+    mDrone.subscribe(mDrone.EVENT_FILE_RECEIVED, image_handler)
+
+    mDrone.take_picture() 
+
+    take_pic_after_get_cmd(mDrone)
+
+    load_image_base64(image_list)
+    mos_burger()
     
-    time.sleep(1)
+    # publish answer
+    # subscribe command
 
-    while not all_got_response(manager):
-        time.sleep(0.5)
+    mDrone.sock.sendto(b'mon', mDrone.tello_addr)
+    mDrone.sock.sendto(b'mdirection 2', mDrone.tello_addr)
+    mDrone.takeoff()
+    mDrone.sock.sendto(bytes(final_command), mDrone.tello_addr)
+    mDrone.land()
 
-def main(): 
-    manager = Tello_Manager()
-    manager.find_available_tello(1)
-    tello_list = manager.get_tello_list()
-    execution_pools = create_execution_pools(1)
-    ip_fid_dict = {}
-    id_sn_dict = {}
-    id_sn_dict[0] = MORSE
-    sn_ip_dict = {}
-
-    t = Thread(target=drone_handler, args=(tello_list[0], execution_pools[0]))
-    ip_fid_dict[tello_list[0].tello_ip] = 0
-    t.daemon = True
-    t.start()
-    
-    # correct ip
-    put_queue_and_wait('sn?', manager, execution_pools)
-
-    for tello_log in list(manager.get_log().values()):
-        sn = str(tello_log[-1].response)
-        tello_ip = str(tello_log[-1].drone_ip)
-        sn_ip_dict[sn] = tello_ip
-
-    # battery check
-    put_queue_and_wait('battery?', manager, execution_pools)
-
-    for tello_log in list(manager.get_log().values()):
-        battery = int(tello_log[-1].response)
-        print(('[Battery_Show]show drone battery: %d  ip:%s\n' % (battery,tello_log[-1].drone_ip)))
-        if battery < BATTERY_THRESHOLD:
-            print(('[Battery_Low]IP:%s  Battery < Threshold. Exiting...\n'%tello_log[-1].drone_ip))
-            save_log(manager)
-            exit(0)
-
-    # test command
-    # reflec_ip = sn_ip_dict[MORSE]
-    # fid = ip_fid_dict[reflec_ip]
-    execution_pools[0].put("command")
-    time.sleep(10)
 
 if __name__ == "__main__":
     main()
+
+
