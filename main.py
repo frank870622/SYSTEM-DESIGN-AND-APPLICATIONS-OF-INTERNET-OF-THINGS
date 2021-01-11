@@ -23,7 +23,7 @@ def put_queue_and_wait(action, manager, execution_pools):
 
 def main(): 
     manager = Tello_Manager()
-    manager.find_avaliable_tello(1)
+    manager.find_available_tello(1)
     tello_list = manager.get_tello_list()
     execution_pools = create_execution_pools(1)
     ip_fid_dict = {}
@@ -56,8 +56,8 @@ def main():
             exit(0)
 
     # test command
-    reflec_ip = sn_ip_dict[MORSE]
-    fid = ip_fid_dict[reflec_ip]
+    # reflec_ip = sn_ip_dict[MORSE]
+    # fid = ip_fid_dict[reflec_ip]
     execution_pools[0].put("command")
     time.sleep(10)
 

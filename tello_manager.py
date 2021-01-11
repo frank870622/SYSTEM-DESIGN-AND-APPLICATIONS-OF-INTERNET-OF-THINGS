@@ -40,9 +40,9 @@ class Tello_Manager:
         self.last_response_index = {}
         self.str_cmd_index = {}
 
-    def find_avaliable_tello(self, num):
+    def find_available_tello(self, num):
         """
-        Find avaliable tello in server's subnets
+        Find available tello in server's subnets
         :param num: Number of Tello this method is expected to find
         :return: None
         """
