@@ -18,7 +18,7 @@ def _receive_thread():
             response, ip = m_socket.recvfrom(1024)
             ip = ''.join(str(ip[0]))
             if response.upper() == b'OK' and ip not in tello_ip_list:
-                print('[Found_Tello]Found Tello.The Tello ip is:%s\n' % ip)
+                print(ip)
                 tello_ip_list.append(ip)
                 break
 
@@ -32,7 +32,6 @@ def find_available_tello(num):
     :param num: Number of Tello this method is expected to find
     :return: None
     """
-    print('[Start_Searching]Searching for %s available Tello...\n' % num)
 
     global tello_ip_list
     subnets, address = get_subnets()
@@ -46,7 +45,6 @@ def find_available_tello(num):
             possible_addr.append(str(ip))
 
     while len(tello_ip_list) < num:
-        print('[Still_Searching]Trying to find Tello in subnets...\n')
 
         # delete already found Tello
         for tello_ip in tello_ip_list:
@@ -94,7 +92,7 @@ def get_subnets():
         addr_list.append(address)
     return subnets, addr_list
 
-def main():
+def get_tello_ip():
     global m_socket
     global tello_ip_list
 
@@ -108,6 +106,7 @@ def main():
     tello_ip_list = []
     find_available_tello(1)
     m_socket.close()
+    return tello_ip_list[0]
 
 if __name__ == "__main__":
-    main()
+    get_tello_ip()
