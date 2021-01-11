@@ -2,7 +2,7 @@ import threading
 
 from morse_burger_light_base64 import load_image_base64, mos_burger
 
-import tellopy
+import mTelloPy
 image_list = []
 
 def image_handler(event, sender, data):
@@ -23,7 +23,7 @@ def take_pic_after_get_cmd(mDrone):
 
 
 def main():
-    mDrone = tellopy.Tello()
+    mDrone = mTelloPy.mTello()
     mDrone.connect()
     mDrone.subscribe(mDrone.EVENT_FILE_RECEIVED, image_handler)
 
