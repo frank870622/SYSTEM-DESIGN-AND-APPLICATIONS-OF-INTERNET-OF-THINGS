@@ -4,6 +4,7 @@ import threading
 from morse_burger_light_base64 import load_image_base64, mos_burger
 import time
 import mTelloPy
+import paho.mqtt.client as mqtt
 image_list = []
 answer_flag = 0
 final_command = ''
