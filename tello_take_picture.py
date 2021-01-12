@@ -58,7 +58,7 @@ def server_func():
     client.username_pw_set("try","xxxx")
 
     # 設定連線資訊(IP, Port, 連線時間)
-    client.connect("140.116.82.164", 1883, 60)
+    client.connect("127.0.0.1", 1883, 60)
     global answer_flag
 
     while True:
@@ -103,7 +103,7 @@ def client_func():
     client.username_pw_set("try","xxxx")
 
     # 設定連線資訊(IP, Port, 連線時間)
-    client.connect("140.116.82.164", 1883, 60)
+    client.connect("127.0.0.1", 1883, 60)
     #client.connect("127.0.0.1", 1883, 60)
 
     # 開始連線，執行設定的動作和處理重新連線問題
